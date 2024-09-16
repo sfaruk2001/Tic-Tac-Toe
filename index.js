@@ -2,7 +2,9 @@
 function GameBoard() {
     let gameBoard = ['','','','','','','','',''];
 
-    const getBoard = () => gameBoard;
+    const getBoard = () => {
+        return gameBoard;
+    };
 
     //Allow user to input positions 1-9. Will adjust it for index.
     const inputMark = (mark, position) => {
@@ -11,7 +13,15 @@ function GameBoard() {
         } else {
             return;
         }
-    };  
+    };
+    
+    const isFilled = (position) => {
+        if (gameBoard[position-1].length === 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
     
     const printBoard = () => {
         const board2d = [[gameBoard[0],gameBoard[1],gameBoard[2]],
@@ -23,7 +33,7 @@ function GameBoard() {
 
     //possible reset board function needed
 
-    return {getBoard, inputMark, printBoard};
+    return {getBoard, inputMark, printBoard, isFilled};
 }
 
 function Player(mark, name) {
@@ -59,7 +69,7 @@ function GameController() {
         }
 
         //checks if the player's position is already filled
-        if ((board.getBoard()[position]).length === 1) {
+        if (board.isFilled(position)) {
             console.log("This position is already taken up please choose another spot!");
             return;
         }
