@@ -47,7 +47,14 @@ function GameController() {
     let player2 = Player('O', 'Player 2');
     let board = GameBoard();
     let gameOver = false;
+    let isTied = false;
     let activePlayer = player1;
+
+    const winCombos = [
+                        [0,1,2], [3,4,5], [6,7,8], 
+                        [0,3,6], [1,4,7], [2,5,8],
+                        [0,4,8], [2,4,6]
+                      ];
     
     //returns a player object
     const getActivePlayer = () => {
@@ -79,8 +86,41 @@ function GameController() {
          * Check for win conditions or ties
          * if it matches either set gameover to true 
          */
+        checkForWin(board.getBoard(), (getActivePlayer()));
+        if (gameOver === true) {
+            board.printBoard();
+            console.log(`${(getActivePlayer()).getName()} won`);
+            return;
+        }
+        checkForTie(board.getBoard());
+        if (gameOver === true && isTied === true) {
+            board.printBoard();
+            console.log("It's a Tie!");
+            return;
+        }
+
+        
         switchPlayer();
         printNewTurn();
+    }
+
+    const checkForWin = (board, player) => {
+        for (let i = 0; i < winCombos.length; i++) {
+            if (board[(winCombos[i][0])] === player.getMark() && board[(winCombos[i][1])] === player.getMark() && board[(winCombos[i][2])] === player.getMark()) {
+                gameOver = true;
+                return;
+            }
+        }
+    }
+
+    const checkForTie = (board) => {
+        for (let i = 0; i < board.length; i++) {
+            if (board[i].length === 0) {
+                return;
+            }
+        }
+        gameOver = true;
+        isTied = true;
     }
 
     printNewTurn();
@@ -89,30 +129,6 @@ function GameController() {
 }
 
 const game = GameController();
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/** 
-let player1 = Player('X', 'Jackie');
-let player2 = Player('O', 'Shihab');
-let board = GameBoard();
-board.printBoard();
-board.inputMark(player1.getMark(), 3);
-board.printBoard();
-board.inputMark(player2.getMark(), 4);
-board.printBoard();*/
 
 
 
