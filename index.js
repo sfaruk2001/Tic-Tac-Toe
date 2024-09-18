@@ -1,5 +1,5 @@
 
-function GameBoard() {
+board = (function GameBoard() {
     let gameBoard = ['','','','','','','','',''];
 
     const getBoard = () => {
@@ -31,21 +31,36 @@ function GameBoard() {
         console.log(board2d);
     };
 
+    const resetBoard = () => {
+        gameBoard = ['','','','','','','','',''];
+    }
+
     //possible reset board function needed
 
-    return {getBoard, inputMark, printBoard, isFilled};
-}
+    return {getBoard, inputMark, printBoard, isFilled, resetBoard};
+})();
 
-function Player(mark, name) {
+function Player(mark, name, player_num) {
     const getMark = () => mark;
     const getName = () => name;
-    return {getMark, getName};
+    const setName = (newName) => {
+        if(newName === '') {
+            if (player_num === 1) {
+                name = 'Player 1';
+            } else {
+                name = 'Player 2';
+            }
+        } else {
+            name = newName;
+        }
+    }
+    return {getMark, getName, setName};
 }
 
-function GameController() {
-    let player1 = Player('X','Player 1');
-    let player2 = Player('O', 'Player 2');
-    let board = GameBoard();
+const game = (function GameController() {
+    let player1 = Player('X','Player 1', 1);
+    let player2 = Player('O', 'Player 2', 2);
+    //let board = GameBoard();
     let gameOver = false;
     let isTied = false;
     let activePlayer = player1;
@@ -55,10 +70,27 @@ function GameController() {
                         [0,3,6], [1,4,7], [2,5,8],
                         [0,4,8], [2,4,6]
                       ];
+
+    //returns game status
+    const isGameOver = () => {
+        return gameOver;
+    }
+
+    const isGameTied = () => {
+        return isTied;
+    }
     
     //returns a player object
     const getActivePlayer = () => {
         return activePlayer;
+    }
+
+    const getPlayer1 = () => {
+        return player1;
+    }
+
+    const getPlayer2 = () => {
+        return player2
     }
 
     const switchPlayer = () => {
@@ -68,6 +100,14 @@ function GameController() {
     const printNewTurn = () => {
         board.printBoard();
         console.log(`${(getActivePlayer()).getName()}'s Turn`);
+    }
+
+    const resetGame = () => {
+        board.resetBoard();
+        gameOver = false;
+        let isTied = false;
+        activePlayer = player1;
+        printNewTurn();
     }
 
     const playTurn = (position) => {
@@ -123,13 +163,53 @@ function GameController() {
         isTied = true;
     }
 
-    printNewTurn();
+    //printNewTurn();
 
-    return {playTurn, getActivePlayer};
-}
+    return {playTurn, getActivePlayer, isGameOver, isGameTied, getPlayer1, getPlayer2, getBoard: board.getBoard, resetGame};
+})();
 
-const game = GameController();
+(function displayController() {
+    const boardDiv = document.querySelector('.board');
+    const cellArr = document.querySelectorAll('.cell');
+    let startButton = document.querySelector('.start');
+    let form = document.querySelector('.inputPlayer');
+    let resetButton = document.querySelector('.reset');
 
+    startButton.addEventListener('click', () => {
+        form.style.display = 'none';
+        boardDiv.style.display = 'grid';
+        resetButton.style.display = 'block'
+
+        game.getPlayer1().setName(document.getElementById('player-1').value);
+        game.getPlayer2().setName(document.getElementById('player-2').value);
+    });
+
+    resetButton.addEventListener('click', () => {
+        game.resetGame();
+        render();
+    });
+    
+    const render = () => {
+        for (let i = 0; i < cellArr.length; i++) {
+            cellArr[i].textContent = game.getBoard()[i];
+        }
+    }
+
+    const handleClick = (e) => {
+        if ((e.target.textContent).length === 1) {
+            return;
+        }  else {
+            game.playTurn(e.target.dataset.cell);
+            render();
+        }
+    }
+
+    cellArr.forEach((cell) => {
+        cell.addEventListener('click', handleClick);
+    });
+
+
+})();
 
 
 
