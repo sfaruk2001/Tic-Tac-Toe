@@ -105,7 +105,7 @@ const game = (function GameController() {
     const resetGame = () => {
         board.resetBoard();
         gameOver = false;
-        let isTied = false;
+        isTied = false;
         activePlayer = player1;
         printNewTurn();
     }
@@ -174,6 +174,7 @@ const game = (function GameController() {
     let startButton = document.querySelector('.start');
     let form = document.querySelector('.inputPlayer');
     let resetButton = document.querySelector('.reset');
+    let winStatus = document.querySelector('.win-status');
 
     startButton.addEventListener('click', () => {
         form.style.display = 'none';
@@ -185,6 +186,7 @@ const game = (function GameController() {
     });
 
     resetButton.addEventListener('click', () => {
+        winStatus.style.display = 'none';
         game.resetGame();
         render();
     });
@@ -196,11 +198,20 @@ const game = (function GameController() {
     }
 
     const handleClick = (e) => {
+        
         if ((e.target.textContent).length === 1) {
             return;
         }  else {
             game.playTurn(e.target.dataset.cell);
             render();
+            if (game.isGameOver()) {
+                winStatus.style.display = 'block';
+                if (game.isGameTied()) {
+                    winStatus.textContent = "It's a Tie!";
+                } else {
+                    winStatus.textContent = `${game.getActivePlayer().getName()} is the Winner!`;
+                }
+            } 
         }
     }
 
