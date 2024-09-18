@@ -31,13 +31,16 @@ h1 {
     color: white;
     border-radius: 5px;
     border: 1px solid grey;
-    margin-top: 30px;
+    margin-top: 50px;
 }
 
 input {
     border: 1px solid rgb(0, 174, 255);
     border-radius: 4px;
+    padding-left: 5px;
+    padding-right: 5px;
     color: rgb(0, 174, 255);
+    margin-left: 12px;
 }
 
 .board {

@@ -179,16 +179,18 @@ const game = (function GameController() {
     startButton.addEventListener('click', () => {
         form.style.display = 'none';
         boardDiv.style.display = 'grid';
-        resetButton.style.display = 'block'
+        resetButton.style.display = 'block';
+        winStatus.style.display = 'block';
 
         game.getPlayer1().setName(document.getElementById('player-1').value);
         game.getPlayer2().setName(document.getElementById('player-2').value);
+        winStatus.textContent = `It's ${game.getPlayer1().getName()}'s Turn!`;
     });
 
     resetButton.addEventListener('click', () => {
-        winStatus.style.display = 'none';
         game.resetGame();
         render();
+        winStatus.textContent = `It's ${game.getPlayer1().getName()}'s Turn!`;
     });
     
     const render = () => {
@@ -205,13 +207,15 @@ const game = (function GameController() {
             game.playTurn(e.target.dataset.cell);
             render();
             if (game.isGameOver()) {
-                winStatus.style.display = 'block';
+                //winStatus.style.display = 'block';
                 if (game.isGameTied()) {
                     winStatus.textContent = "It's a Tie!";
                 } else {
                     winStatus.textContent = `${game.getActivePlayer().getName()} is the Winner!`;
                 }
-            } 
+            } else {
+                winStatus.textContent = `It's ${game.getActivePlayer().getName()}'s Turn!`;
+            }
         }
     }
 
